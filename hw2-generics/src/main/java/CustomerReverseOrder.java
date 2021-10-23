@@ -1,17 +1,16 @@
-import java.util.Stack;
+import java.util.LinkedList;
 
 public class CustomerReverseOrder {
 
     //todo: 2. надо реализовать методы этого класса
     //надо подобрать подходящую структуру данных, тогда решение будет в "две строчки"
-    Stack<Customer> customerStack = new Stack<>();
+    LinkedList<Customer> customerList = new LinkedList<>();
 
     public void add(Customer customer) {
-        customerStack.add(customer);
+        customerList.add(customer);
     }
 
     public Customer take() {
-
-        return customerStack.pop();
+        return customerList.pollLast();
     }
 }
