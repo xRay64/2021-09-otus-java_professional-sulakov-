@@ -40,10 +40,12 @@ public class TestClassParser {
 
             Exception thrownException = null;
             //Вызываем before метод
-            try {
-                beforeMethod.invoke(testClassObject);
-            } catch (Exception e) {
-                thrownException = e;
+            if (beforeMethod != null) {
+                try {
+                    beforeMethod.invoke(testClassObject);
+                } catch (Exception e) {
+                    thrownException = e;
+                }
             }
             //Если в методе before не получили exception - считаем что окружение подготовлено успешно и вызываем тестовый метод
             if (thrownException == null) {
@@ -54,10 +56,12 @@ public class TestClassParser {
                 }
             }
             //В любом случае вызываем метод after
-            try {
-                afterMethod.invoke(testClassObject);
-            } catch (Exception e) {
-                thrownException = e;
+            if (afterMethod != null){
+                try {
+                    afterMethod.invoke(testClassObject);
+                } catch (Exception e) {
+                    thrownException = e;
+                }
             }
 
             //Сохраним результаты
