@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'com.github.johnrengelman.shadow'
+    id "io.freefair.lombok"
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
@@ -16,7 +17,6 @@ dependencies {
     testImplementation ('org.assertj:assertj-core')
     testImplementation ('org.mockito:mockito-core')
     testImplementation('org.mockito:mockito-junit-jupiter')
-    compileOnly('org.projectlombok:lombok')
 }
 
 test {

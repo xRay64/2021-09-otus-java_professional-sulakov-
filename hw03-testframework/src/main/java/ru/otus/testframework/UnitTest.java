@@ -29,8 +29,14 @@ public class UnitTest {
         throw new NullPointerException();
     }
 
+    @Test
+    public void shouldThrowExceptionAgain() {
+        throw new IndexOutOfBoundsException();
+    }
+
     @After
     public void afterTest() {
+//        Integer.parseInt("o");
         System.out.println("inside after");
     }
 }

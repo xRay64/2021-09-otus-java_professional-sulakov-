@@ -3,100 +3,93 @@ package ru.otus.testframework.processor;
 import ru.otus.testframework.annotations.After;
 import ru.otus.testframework.annotations.Before;
 import ru.otus.testframework.annotations.Test;
+import ru.otus.testframework.processor.ext.ReflectionHelper;
+import ru.otus.testframework.processor.ext.TestContext;
+import ru.otus.testframework.processor.ext.TestResult;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TestClassParser {
 
-    private static Class testClass;
-    private static Method beforeMethod;
-    private static Method afterMethod;
-    private static final List<Method> testMethodsList = new ArrayList<>();
-    private static int completeTestCount = 0;
-    private static int passTestCount = 0;
-    private static int failTestCount = 0;
-
-
     public static void doTests(Class<?> clazz) {
 
-        testClass = clazz;
+        TestContext testContext = new TestContext(clazz);
+        TestResult testResult = new TestResult();
 
-        parseClass();
+        parseClass(testContext);
 
         //Итерируемся по тестовым методам
-        for (Method testMethod : testMethodsList) {
+        for (Method testMethod : testContext.getTestMethodsList()) {
 
             //Для каждого тестового метода создаем новый объект тестового класса
-            Object testClassObject;
-            try {
-                testClassObject = testClass.getDeclaredConstructor().newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException("Тестовый клас должен иметь конструктор без аргументов");
-            }
+            Object testClassObject = ReflectionHelper.instantiate(testContext.getTestClass());
 
-            Exception thrownException = null;
             //Вызываем before метод
-            if (beforeMethod != null) {
+            if (!testContext.isBeforeMethodNull()) {
                 try {
-                    beforeMethod.invoke(testClassObject);
+                    testContext.getBeforeMethod().invoke(testClassObject);
                 } catch (Exception e) {
-                    thrownException = e;
-                }
-            }
-            //Если в методе before не получили exception - считаем что окружение подготовлено успешно и вызываем тестовый метод
-            if (thrownException == null) {
-                try {
-                    testMethod.invoke(testClassObject);
-                } catch (Exception e) {
-                    thrownException = e;
-                }
-            }
-            //В любом случае вызываем метод after
-            if (afterMethod != null){
-                try {
-                    afterMethod.invoke(testClassObject);
-                } catch (Exception e) {
-                    thrownException = e;
+                    //если не смогли подготовить окружение - дальнешеее тестирование бессмысленно
+                    System.out.println("Exception in before method");
+                    throw new RuntimeException(e);
                 }
             }
 
-            //Сохраним результаты
-            completeTestCount++;
-            if (thrownException == null) {
-                passTestCount++;
-            } else {
-                failTestCount++;
+            try {
+                testMethod.invoke(testClassObject);
+            } catch (Exception e) {
+                //Если ловим исключение в тестовом методе - тестирование не прерываем
+                testResult.incrementFailTest();
+                //исключение сохраняем в результатах тестирования
+                testResult.saveTestException(testMethod, e);
+            } finally {
+                testResult.incrementCompleteTest();
+            }
+
+            //В любом случае, не зависимо от исключений в тестовых методах, вызываем метод after
+            if (!testContext.isAfterMethodNull()) {
+                try {
+                    testContext.getAfterMethod().invoke(testClassObject);
+                } catch (Exception e) {
+                    //Если ловим исключение в методе after - прерываем тестирование
+                    System.out.println("Exception in after method");
+                    throw new RuntimeException(e);
+                }
             }
         }
-        printResults();
+        printResults(testResult);
     }
 
-    private static void printResults() {
-        System.out.println("Выполнено тестов всего: " + completeTestCount);
-        System.out.println("Выполнено тестов успешно: " + passTestCount);
-        System.out.println("Выполнено тестов не успешно: " + failTestCount);
+    private static void printResults(TestResult testResult) {
+        System.out.println("Выполнено тестов всего: " + testResult.getCompleteTestCount());
+        System.out.println("Выполнено тестов успешно: " + (testResult.getCompleteTestCount() - testResult.getFailTestCount()));
+        System.out.println("Выполнено тестов не успешно: " + testResult.getFailTestCount());
+        if (testResult.hasExceptions()) {
+            System.out.println();
+            testResult.getExceptionMap().forEach((s, e) -> {
+                System.out.println("Exception in method " + s);
+                e.printStackTrace();
+                System.out.println();
+            });
+        }
     }
 
-    private static void parseClass() {
-        for (Method method : testClass.getDeclaredMethods()) {
+    private static void parseClass(TestContext context) {
+        for (Method method : context.getTestClass().getDeclaredMethods()) {
             if (method.isAnnotationPresent(Before.class)) {
-                if (beforeMethod == null) {
-                    beforeMethod = method;
+                if (context.isBeforeMethodNull()) {
+                    context.setBeforeMethod(method);
                 } else {
                     throw new RuntimeException("Тестовый класс может содержать только один метод Before");
                 }
             } else if (method.isAnnotationPresent(After.class)) {
-                if (afterMethod == null) {
-                    afterMethod = method;
+                if (context.isAfterMethodNull()) {
+                    context.setAfterMethod(method);
                 } else {
                     throw new RuntimeException("Тестовый класс может содержать только один метод After");
                 }
             } else if (method.isAnnotationPresent(Test.class)) {
-                testMethodsList.add(method);
+                context.addTestMethod(method);
             }
         }
     }
