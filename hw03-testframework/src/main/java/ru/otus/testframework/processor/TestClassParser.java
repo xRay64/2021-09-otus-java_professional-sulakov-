@@ -21,29 +21,30 @@ public class TestClassParser {
 
             //Для каждого тестового метода создаем новый объект тестового класса
             Object testClassObject = ReflectionHelper.instantiate(testContext.getTestClass());
+            boolean isBeforeComplete = true;
 
             //Вызываем before метод
             if (!testContext.isBeforeMethodNull()) {
                 try {
                     testContext.getBeforeMethod().invoke(testClassObject);
                 } catch (Exception e) {
-                    //если не смогли подготовить окружение - дальнейшее тестирование бессмысленно
+                    //если не смогли подготовить окружение - выполнение тестового метода бессмысленно
                     System.out.println("Exception in before method");
-                    throw new RuntimeException(e);
-                } finally {
-                    ReflectionHelper.callMethod(testClassObject, testContext.getAfterMethod());
+                    isBeforeComplete = false;
                 }
             }
 
-            try {
-                testMethod.invoke(testClassObject);
-            } catch (Exception e) {
-                //Если ловим исключение в тестовом методе - тестирование не прерываем
-                testResult.incrementFailTest();
-                //исключение сохраняем в результатах тестирования
-                testResult.saveTestException(testMethod, e);
-            } finally {
-                testResult.incrementCompleteTest();
+            if (isBeforeComplete) {
+                try {
+                    testMethod.invoke(testClassObject);
+                } catch (Exception e) {
+                    //Если ловим исключение в тестовом методе - тестирование не прерываем
+                    testResult.incrementFailTest();
+                    //исключение сохраняем в результатах тестирования
+                    testResult.saveTestException(testMethod, e);
+                } finally {
+                    testResult.incrementCompleteTest();
+                }
             }
 
             //В любом случае, не зависимо от исключений в тестовых методах, вызываем метод after
