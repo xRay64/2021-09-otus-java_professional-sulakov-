@@ -1,5 +1,6 @@
 package ru.otus.testframework.processor.ext;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 
@@ -27,9 +28,18 @@ public class ReflectionHelper {
         }
     }
 
-    public static Object callMethod(Object object, String name, Object... args) {
+    public static Object callMethodByName(Object object, String name, Object... args) {
         try {
             var method = object.getClass().getDeclaredMethod(name, toClasses(args));
+            method.setAccessible(true);
+            return method.invoke(object, args);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Object callMethod(Object object, Method method, Object... args) {
+        try {
             method.setAccessible(true);
             return method.invoke(object, args);
         } catch (Exception e) {

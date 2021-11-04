@@ -13,10 +13,8 @@ public class TestClassParser {
 
     public static void doTests(Class<?> clazz) {
 
-        TestContext testContext = new TestContext(clazz);
+        TestContext testContext = parseClass(clazz);
         TestResult testResult = new TestResult();
-
-        parseClass(testContext);
 
         //Итерируемся по тестовым методам
         for (Method testMethod : testContext.getTestMethodsList()) {
@@ -29,9 +27,11 @@ public class TestClassParser {
                 try {
                     testContext.getBeforeMethod().invoke(testClassObject);
                 } catch (Exception e) {
-                    //если не смогли подготовить окружение - дальнешеее тестирование бессмысленно
+                    //если не смогли подготовить окружение - дальнейшее тестирование бессмысленно
                     System.out.println("Exception in before method");
                     throw new RuntimeException(e);
+                } finally {
+                    ReflectionHelper.callMethod(testClassObject, testContext.getAfterMethod());
                 }
             }
 
@@ -74,7 +74,8 @@ public class TestClassParser {
         }
     }
 
-    private static void parseClass(TestContext context) {
+    private static TestContext parseClass(Class<?> clazz) {
+        TestContext context = new TestContext(clazz);
         for (Method method : context.getTestClass().getDeclaredMethods()) {
             if (method.isAnnotationPresent(Before.class)) {
                 if (context.isBeforeMethodNull()) {
@@ -92,5 +93,6 @@ public class TestClassParser {
                 context.addTestMethod(method);
             }
         }
+        return context;
     }
 }
