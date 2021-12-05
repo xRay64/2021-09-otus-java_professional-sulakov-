@@ -3,4 +3,5 @@ include 'hw01-gradle'
 include 'hw2-generics'
 include 'hw03-testframework'
 include 'hw04-garbage_collector'
+include 'HW06-ATM'
 
