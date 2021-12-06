@@ -3,7 +3,9 @@ import annotations.Log;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 class Ioc {
 
@@ -18,22 +20,30 @@ class Ioc {
 
     static class DemoInvocationHandler implements InvocationHandler {
         private final TestLogging myClass;
+        private final Class<?> clazz;
+        private final ArrayList<Method> logAnnotatedMethods = new ArrayList<>();
 
         DemoInvocationHandler(TestLogging myClass) {
             this.myClass = myClass;
+            clazz = myClass.getClass();
+            for (Method declaredMethod : clazz.getDeclaredMethods()) {
+                if (declaredMethod.isAnnotationPresent(Log.class)) {
+                    logAnnotatedMethods.add(declaredMethod);
+                }
+            }
+            System.out.println("logAnnotatedMethods.size() " + logAnnotatedMethods.size());
         }
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            Class<?> clazz = myClass.getClass();
-            Class<?>[] paramsClasses = new Class[args.length];
-            for (int i = 0; i < args.length; i++) {
-                paramsClasses[i] = args[i].getClass();
+            boolean isNeedToBeLogged = false;
+            for (Method logAnnotatedMethod : logAnnotatedMethods) {
+                if (logAnnotatedMethod.getName().equals(method.getName()) && Arrays.equals(logAnnotatedMethod.getParameterTypes(), method.getParameterTypes())) {
+                    isNeedToBeLogged = true;
+                }
             }
-            Method clazzMethod;
-            clazzMethod = clazz.getMethod(method.getName(), paramsClasses);
-            if (clazzMethod.isAnnotationPresent(Log.class)) {
-                System.out.println("invoking method: " + clazzMethod.getName() + "; with params: " + Arrays.toString(args));
+            if (isNeedToBeLogged) {
+                System.out.println("invoking method: " + method.getName() + "; with params: " + Arrays.toString(args));
             }
             return method.invoke(myClass, args);
         }
