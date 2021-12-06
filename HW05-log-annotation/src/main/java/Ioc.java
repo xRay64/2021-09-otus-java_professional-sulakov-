@@ -20,12 +20,11 @@ class Ioc {
 
     static class DemoInvocationHandler implements InvocationHandler {
         private final TestLogging myClass;
-        private final Class<?> clazz;
         private final ArrayList<Method> logAnnotatedMethods = new ArrayList<>();
 
         DemoInvocationHandler(TestLogging myClass) {
             this.myClass = myClass;
-            clazz = myClass.getClass();
+            Class<?> clazz = myClass.getClass();
             for (Method declaredMethod : clazz.getDeclaredMethods()) {
                 if (declaredMethod.isAnnotationPresent(Log.class)) {
                     logAnnotatedMethods.add(declaredMethod);
@@ -40,6 +39,7 @@ class Ioc {
             for (Method logAnnotatedMethod : logAnnotatedMethods) {
                 if (logAnnotatedMethod.getName().equals(method.getName()) && Arrays.equals(logAnnotatedMethod.getParameterTypes(), method.getParameterTypes())) {
                     isNeedToBeLogged = true;
+                    break;
                 }
             }
             if (isNeedToBeLogged) {
