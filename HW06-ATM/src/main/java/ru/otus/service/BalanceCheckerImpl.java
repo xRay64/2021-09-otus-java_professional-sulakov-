@@ -1,0 +1,8 @@
+package ru.otus.service;
+
+public class BalanceCheckerImpl implements BalanceChecker {
+    @Override
+    public String getATMBalance(Cassette cassette) {
+        return cassette.getMapOfContent().toString();
+    }
+}

@@ -1,41 +1,21 @@
 plugins {
-    // Apply the java plugin to add support for Java
     id 'java'
-    id 'com.github.johnrengelman.shadow'
+    id "io.freefair.lombok"
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+group 'ru.otus'
+version 'unspecified'
+
+repositories {
+    mavenCentral()
+}
 
 dependencies {
-    // This dependency is used by the application.
-    testImplementation ('org.junit.jupiter:junit-jupiter-api')
-    testImplementation ('org.junit.jupiter:junit-jupiter-engine')
-    testImplementation ('org.assertj:assertj-core')
-    testImplementation ('org.mockito:mockito-core')
-    testImplementation ('org.mockito:mockito-junit-jupiter')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+    testImplementation("org.assertj:assertj-core:3.22.0")
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
 }
 
 test {
     useJUnitPlatform()
-    testLogging {
-        events "passed", "skipped", "failed"
-    }
 }
-
-tasks.withType(JavaCompile) {
-    options.with {
-        encoding = 'UTF-8'
-    }
-}
-
-shadowJar {
-    archiveBaseName.set('hw06atm')
-    archiveVersion.set('0.1')
-    archiveClassifier.set('')
-    manifest {
-        attributes 'Main-Class': 'calculator.CalcDemo'
-    }
-}
-
-tasks.build.dependsOn tasks.shadowJar
