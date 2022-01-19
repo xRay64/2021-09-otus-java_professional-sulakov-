@@ -1,12 +1,21 @@
 package ru.otus.ext;
 
-import java.util.List;
+public enum RubleBanknotes {
+    FIFTY(50),
+    HUNDRED(100),
+    TWO_HUNDRED(200),
+    FIVE_HUNDRED(500),
+    THOUSAND(1000),
+    TWO_THOUSAND(2000),
+    FIVE_THOUSAND(5000);
 
-public class RubleBanknotes implements Banknotes {
-    private final List<Integer> banknotesList = List.of(50, 100, 200, 500, 1000, 2000, 5000);
+    private final int value;
 
-    @Override
-    public List<Integer> getBanknotesList() {
-        return this.banknotesList;
+    RubleBanknotes(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
     }
 }

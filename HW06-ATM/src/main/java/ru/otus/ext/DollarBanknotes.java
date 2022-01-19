@@ -1,12 +1,20 @@
 package ru.otus.ext;
 
-import java.util.List;
+public enum DollarBanknotes{
+    ONE(1),
+    TWO(2),
+    FIVE(5),
+    TEN(10),
+    FIFTY(50),
+    HUNDRED(100);
 
-public class DollarBanknotes implements Banknotes{
-    private final List<Integer> banknotesList = List.of(1, 2, 5, 10, 20, 50, 100);
+    private final int value;
 
-    @Override
-    public List<Integer> getBanknotesList() {
-        return this.banknotesList;
+    DollarBanknotes(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
     }
 }

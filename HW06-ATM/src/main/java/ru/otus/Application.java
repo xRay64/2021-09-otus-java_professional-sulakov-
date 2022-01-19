@@ -1,15 +1,17 @@
 package ru.otus;
 
-import ru.otus.ext.RubleBanknotes;
-import ru.otus.service.*;
+import ru.otus.service.BalanceCheckerImpl;
+import ru.otus.service.CassetteImpl;
+import ru.otus.service.MoneyProcessorImpl;
+import ru.otus.service.ScreenPrinterImpl;
 
 import java.util.List;
 
 public class Application {
     public static void main(String[] args) {
-        ATM atm = new ATM(
-                new CassetteImpl(new RubleBanknotes())
-                , MoneyProcessorImpl.get()
+        ATM atm = new ATMImpl(
+                new CassetteImpl("rubel")
+                , new MoneyProcessorImpl()
                 , new BalanceCheckerImpl()
                 , new ScreenPrinterImpl()
         );

@@ -1,23 +1,14 @@
 package ru.otus.service;
 
+import lombok.NoArgsConstructor;
 import ru.otus.service.exception.NotEnoughBanknotesException;
 
 import java.util.*;
 
+@NoArgsConstructor
 public class MoneyProcessorImpl implements MoneyProcessor {
 
     private static MoneyProcessorImpl moneyProcessor;
-
-    private MoneyProcessorImpl() {
-
-    }
-
-    public static MoneyProcessorImpl get() {
-        if (moneyProcessor == null) {
-            moneyProcessor = new MoneyProcessorImpl();
-        }
-        return moneyProcessor;
-    }
 
     @Override
     public void putMoney(Cassette cassette, Map<Integer, Integer> bunchOfMoneyToInsert) {

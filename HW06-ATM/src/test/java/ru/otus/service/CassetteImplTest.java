@@ -14,7 +14,7 @@ class CassetteImplTest {
     @Test
     @Description("отдавать корректную карту наполнения ячеек")
     void shouldReturnCorrectMapOfContent() {
-        Cassette cassette = new CassetteImpl(new RubleBanknotes());
+        Cassette cassette = new CassetteImpl("rubel");
         Map<Integer, Integer> contentMap = cassette.getMapOfContent();
 
         assertThat(contentMap.get(2000))
@@ -28,7 +28,7 @@ class CassetteImplTest {
     @Test
     @Description("должен брать банкноты")
     void shouldGetBanknotes() {
-        Cassette cassette = new CassetteImpl(new RubleBanknotes());
+        Cassette cassette = new CassetteImpl("rubel");
         cassette.getBanknotes(1000, 10);
 
         assertThat(cassette.getMapOfContent().get(1000))
@@ -38,7 +38,7 @@ class CassetteImplTest {
     @Test
     @Description("должен ложить банкноты")
     void shouldPutBanknotes() {
-        Cassette cassette = new CassetteImpl(new RubleBanknotes());
+        Cassette cassette = new CassetteImpl("rubel");
         cassette.putBanknotes(1000, 10);
 
         assertThat(cassette.getMapOfContent().get(1000))
