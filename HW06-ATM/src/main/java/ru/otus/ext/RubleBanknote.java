@@ -1,6 +1,6 @@
 package ru.otus.ext;
 
-public enum RubleBanknotes {
+public enum RubleBanknote implements Banknote {
     FIFTY(50),
     HUNDRED(100),
     TWO_HUNDRED(200),
@@ -11,7 +11,7 @@ public enum RubleBanknotes {
 
     private final int value;
 
-    RubleBanknotes(int value) {
+    RubleBanknote(int value) {
         this.value = value;
     }
 

@@ -1,5 +1,7 @@
 package ru.otus.service;
 
+import ru.otus.ext.Banknote;
+
 import java.util.Map;
 
 public interface ScreenPrinter {
@@ -7,5 +9,5 @@ public interface ScreenPrinter {
 
     void printError(String errorMessage);
 
-    void printGivingMoney(Map<Integer, Integer> givingMoney);
+    void printGivingMoney(Map<Banknote, Integer> givingMoney);
 }

@@ -1,7 +1,10 @@
 package ru.otus.service.exception;
 
-public class WrongBanknoteException extends RuntimeException {
+import ru.otus.ATM;
+
+public class WrongBanknoteException extends ATMException {
     public WrongBanknoteException(String message) {
         super(message);
     }
+
 }

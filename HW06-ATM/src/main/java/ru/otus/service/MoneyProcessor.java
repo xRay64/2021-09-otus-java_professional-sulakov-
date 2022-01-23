@@ -1,11 +1,12 @@
 package ru.otus.service;
 
+import ru.otus.ext.Banknote;
 import ru.otus.service.exception.NotEnoughBanknotesException;
 
 import java.util.Map;
 
 public interface MoneyProcessor {
-    void putMoney(Cassette cassette, Map<Integer, Integer> bunchOfMoney);
+    void putMoney(Safe safe, Map<Banknote, Integer> bunchOfMoney);
 
-    Map<Integer, Integer> getMoney(Cassette cassette, Integer amount) throws NotEnoughBanknotesException;
+    Map<Banknote, Integer> getMoney(Safe safe, Integer amount) throws NotEnoughBanknotesException;
 }

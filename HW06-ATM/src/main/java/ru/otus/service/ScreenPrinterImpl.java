@@ -1,5 +1,7 @@
 package ru.otus.service;
 
+import ru.otus.ext.Banknote;
+
 import java.util.Locale;
 import java.util.Map;
 
@@ -17,10 +19,10 @@ public class ScreenPrinterImpl implements ScreenPrinter {
     }
 
     @Override
-    public void printGivingMoney(Map<Integer, Integer> givingMoney) {
+    public void printGivingMoney(Map<Banknote, Integer> givingMoney) {
         System.out.println("Выданы купюры");
         givingMoney.forEach((banknote, count) -> {
-            System.out.printf("Номинал: %d, в количестве %d шт", banknote, count);
+            System.out.printf("Номинал: %d, в количестве %d шт", banknote.getValue(), count);
             System.out.println();
         });
         System.out.println("-------------");
