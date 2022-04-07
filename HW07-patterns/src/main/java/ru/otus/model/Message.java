@@ -1,6 +1,7 @@
 package ru.otus.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Message implements Copyable<Message> {
     private final long id;
@@ -134,9 +135,11 @@ public class Message implements Copyable<Message> {
 
     @Override
     public Message copy() {
-        ArrayList<String> field13Data = new ArrayList<>(this.field13.getData());
-        ObjectForMessage newObjectForMessage = new ObjectForMessage();
-        newObjectForMessage.setData(field13Data);
+        ObjectForMessage newObjectForMessage = null;
+        if (this.field13 != null) {
+            newObjectForMessage = new ObjectForMessage();
+            newObjectForMessage.setData(new ArrayList<>(this.field13.getData()));
+        }
 
         return new Builder(this.id)
                 .field1(this.field1)

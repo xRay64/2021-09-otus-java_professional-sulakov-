@@ -6,19 +6,16 @@ import ru.otus.processor.Processor;
 import java.time.LocalDateTime;
 
 public class ProcessorExceptionist implements Processor {
-    private final LocalDateTime localDateTime;
+    private final DateTimeProvider dateTimeProvider;
 
-    public ProcessorExceptionist() {
-        this.localDateTime = LocalDateTime.now();
-    }
-
-    public ProcessorExceptionist(LocalDateTime localDateTime) {
-        this.localDateTime = localDateTime;
+    public ProcessorExceptionist(DateTimeProvider dateTimeProvider) {
+        this.dateTimeProvider = dateTimeProvider;
     }
 
     @Override
     public Message process(Message message) {
-        if (localDateTime.getSecond() % 2 == 0) {
+        LocalDateTime date = dateTimeProvider.getDate();
+        if (date.getSecond() % 2 == 0) {
             throw new RuntimeException("Current second is even");
         }
         return message;

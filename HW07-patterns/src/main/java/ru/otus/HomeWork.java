@@ -7,6 +7,7 @@ import ru.otus.model.ObjectForMessage;
 import ru.otus.processor.homework.ProcessorExceptionist;
 import ru.otus.processor.homework.ProcessorSwap;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class HomeWork {
@@ -31,7 +32,7 @@ public class HomeWork {
          */
 
         var processors = List.of(new ProcessorSwap(),
-                new ProcessorExceptionist());
+                new ProcessorExceptionist(LocalDateTime::now));
 
         var complexProcessor = new ComplexProcessor(processors, Throwable::printStackTrace);
         var historyListener = new HistoryListener();
