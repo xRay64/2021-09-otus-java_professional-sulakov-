@@ -5,4 +5,4 @@ include 'hw03-testframework'
 include 'hw04-garbage_collector'
 include 'HW05-log-annotation'
 include 'HW06-ATM'
-
+include 'HW07-patterns'
