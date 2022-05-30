@@ -12,30 +12,36 @@ import java.util.List;
 public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
     private final Class<T> clazz;
 
+    private final String className;
+    private final Constructor<T> constructor;
+    private final Field idField;
+    private final List<Field> fields;
+
     public EntityClassMetaDataImpl(Class<T> type) {
         this.clazz = type;
+
+        this.className = defineClassName(type);
+        this.constructor = defineConstructor(type);
+        this.idField = defineIdField(type);
+        this.fields = defineAllClassFields(type);
     }
 
-    @Override
-    public String getName() {
-        return clazz.getSimpleName().toLowerCase();
+    private String defineClassName(Class<T> type) {
+        return type.getSimpleName().toLowerCase();
     }
 
-    @Override
-    public Constructor<T> getConstructor() {
+    public Constructor<T> defineConstructor(Class<T> type) {
         Constructor<T> constructor;
         try {
-            constructor = clazz.getConstructor();
+            constructor = type.getConstructor();
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
         return constructor;
     }
 
-    @Override
-    public Field getIdField() {
-        Field resultField = null;
-        for (Field field : clazz.getDeclaredFields()) {
+    public Field defineIdField(Class<T> type) {
+        for (Field field : type.getDeclaredFields()) {
             if (field.isAnnotationPresent(Id.class)) {
                 return field;
             }
@@ -43,20 +49,35 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
         throw new MapperException("Entity class dose not have Id field");
     }
 
+    private List<Field> defineAllClassFields(Class<T> type) {
+        return Arrays.stream(type.getDeclaredFields()).toList();
+    }
+
+    @Override
+    public String getName() {
+        return this.className;
+    }
+
+    @Override
+    public Constructor<T> getConstructor() {
+        return this.constructor;
+    }
+
+    @Override
+    public Field getIdField() {
+        return this.idField;
+    }
+
     @Override
     public List<Field> getAllFields() {
-        return Arrays.stream(clazz.getDeclaredFields()).toList();
+        return this.fields;
     }
 
     @Override
     public List<Field> getFieldsWithoutId() {
         List<Field> resultList = new ArrayList<>();
-        Field idField = getIdField();
-        if (idField == null) {
-            throw new MapperException("Entity class dose not have Id field");
-        }
-        for (Field field : clazz.getDeclaredFields()) {
-            if (!field.getName().equals(idField.getName())) {
+        for (Field field : this.fields) {
+            if (!field.getName().equals(this.idField.getName())) {
                 resultList.add(field);
             }
         }

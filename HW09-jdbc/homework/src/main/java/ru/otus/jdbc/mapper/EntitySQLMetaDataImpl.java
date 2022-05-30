@@ -4,10 +4,10 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
-    private final EntityClassMetaData entityClassMetaData;
+public class EntitySQLMetaDataImpl<T> implements EntitySQLMetaData {
+    private final EntityClassMetaData<T> entityClassMetaData;
 
-    public EntitySQLMetaDataImpl(EntityClassMetaData entityClassMetaData) {
+    public EntitySQLMetaDataImpl(EntityClassMetaData<T> entityClassMetaData) {
         this.entityClassMetaData = entityClassMetaData;
     }
 
@@ -26,7 +26,7 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
 
     @Override
     public String getInsertSql() {
-        List fieldsWithoutId = entityClassMetaData.getFieldsWithoutId();
+        List<Field> fieldsWithoutId = entityClassMetaData.getFieldsWithoutId();
         return "insert into " + getTableNameFromClassName() +
                 " (" + getFieldsString(fieldsWithoutId) + ") " +
                 "values (" +
@@ -54,9 +54,7 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
 
     private String getAllFieldsInsertPlaceholdersString(List<Field> fields) {
         StringBuilder result = new StringBuilder();
-        for (int i = 0; i < fields.size(); i++) {
-            result.append("?, ");
-        }
+        result.append("?, ".repeat(fields.size()));
         result = new StringBuilder(result.substring(0, result.length() - 2));
         return result.toString();
     }
