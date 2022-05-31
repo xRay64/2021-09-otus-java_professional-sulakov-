@@ -9,4 +9,4 @@ include 'HW07-patterns'
 include 'HW08-Serialization'
 include 'HW09-jdbc:demo'
 include 'HW09-jdbc:homework'
-
+include 'HW10-JPQL:homework-template'
