@@ -29,6 +29,9 @@ public class Client implements Cloneable {
     )
     private Address address;
 
+    @Column(name = "password_md5")
+    private String passwordMD5;
+
     @OneToMany(
             cascade = CascadeType.ALL,
             orphanRemoval = true,
@@ -107,6 +110,14 @@ public class Client implements Cloneable {
     public void setPhones(List<Phone> phones) {
         phones.forEach(phone -> phone.setClient(this));
         this.phones = phones;
+    }
+
+    public String getPasswordMD5() {
+        return passwordMD5;
+    }
+
+    public void setPasswordMD5(String password) {
+        this.passwordMD5 = password;
     }
 
     @Override

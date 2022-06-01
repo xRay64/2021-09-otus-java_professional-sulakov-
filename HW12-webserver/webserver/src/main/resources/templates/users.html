@@ -1,0 +1,66 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пользователи</title>
+    <style>
+        table {
+            table-layout: fixed;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 3px solid black;
+            padding: 20px;
+        }
+    </style>
+    <script>
+        function getUserById() {
+            const userIdTextBox = document.getElementById('userIdTextBox');
+            const userDataContainer = document.getElementById('userDataContainer');
+            const id = userIdTextBox.value;
+            //fetch('api/user?id=' + id)
+            fetch('api/user/' + id)
+                .then(response => response.json())
+                .then(user => userDataContainer.innerHTML = JSON.stringify(user));
+        }
+    </script>
+</head>
+
+<body>
+<h4>Получить пользователя по id</h4>
+<input type="text" id = "userIdTextBox" value="3" placeholder="Введите id пользователя">
+<button onclick="getUserById()">Получить</button>
+<pre id = "userDataContainer"></pre>
+
+<h4>Список пользователей</h4>
+<br>
+<table style="width: 400px">
+    <thead>
+    <tr>
+        <th style="width: 50px">Id</th>
+        <th style="width: 150px">Имя</th>
+        <th style="width: 300px">Логин</th>
+        <th style="width: 300px">Телефоны</th>
+        <th style="width: 300px">Пароль</th>
+    </tr>
+    </thead>
+    <tbody>
+        <#list clients as client>
+            <tr>
+                <td>${client.id}</td>
+                <td>${client.name}</td>
+                <td>${client.address.street}</td>
+                <td>
+                    <#list client.phones as phone>
+                    ${phone.number} <#sep>; </#sep>
+                <#else>
+                    у пользователя нет телефона
+                </#list>
+                </td>
+                <td>${client.passwordMD5}</td>
+            </tr>
+        </#list>
+    </tbody>
+</table>
+</body>
+</html>

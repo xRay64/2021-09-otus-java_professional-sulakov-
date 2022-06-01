@@ -52,4 +52,16 @@ public class DbServiceClientImpl implements DBServiceClient {
             return clientList;
        });
     }
+
+    public List<Client> findByName(String name) {
+        return transactionManager.doInReadOnlyTransaction(session -> {
+            var clientList = clientDataTemplate.findByEntityField(
+                    session,
+                    "name",
+                    name
+            );
+            clientList.toString();
+            return clientList;
+        });
+    }
 }

@@ -1,5 +1,6 @@
 package ru.otus.crm.model;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
@@ -9,6 +10,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @Setter
+@Getter
 @ToString
 public class Phone implements Cloneable {
     @Id
