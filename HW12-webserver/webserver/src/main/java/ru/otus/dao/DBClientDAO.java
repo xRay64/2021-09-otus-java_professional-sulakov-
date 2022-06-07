@@ -2,7 +2,6 @@ package ru.otus.dao;
 
 import ru.otus.crm.model.Client;
 import ru.otus.crm.service.DBServiceClient;
-//import ru.otus.model.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,5 +30,10 @@ public class DBClientDAO implements ClientDao {
             return Optional.ofNullable(clientsByName.get(0));
         }
         return Optional.empty();
+    }
+
+    @Override
+    public Client saveClient(Client client) {
+        return dbServiceClient.saveClient(client);
     }
 }

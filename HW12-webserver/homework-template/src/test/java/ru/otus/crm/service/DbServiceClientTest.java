@@ -19,7 +19,7 @@ class DbServiceClientTest extends AbstractHibernateTest {
     void shouldCorrectSaveClient() {
         //given
         var client = new Client(null, "Ivan", new Address(null, "AnyStreet"),
-                List.of(new Phone(null, "13-555-22"), new Phone(null, "14-666-333")));
+                List.of(new Phone(null, "13-555-22"), new Phone(null, "14-666-333")), "1");
 
         //when
         var savedClient = dbServiceClient.saveClient(client);

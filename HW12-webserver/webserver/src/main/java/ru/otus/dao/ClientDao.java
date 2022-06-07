@@ -8,6 +8,10 @@ import java.util.Optional;
 public interface ClientDao {
 
     List<Client> getAll();
+
     Optional<Client> findById(long id);
+
     Optional<Client> findByLogin(String login);
+
+    Client saveClient(Client client);
 }

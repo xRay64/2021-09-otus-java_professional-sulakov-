@@ -28,10 +28,8 @@ public class WebServerWithFilterBasedSecurityDemo {
     private static final int WEB_SERVER_PORT = 8080;
     private static final String TEMPLATES_DIR = "/templates/";
 
-    private static final String HIBERNATE_CFG_FILE = "hibernate.cfg.xml";
-
     public static void main(String[] args) throws Exception {
-        ClientDao clientDao = new DBClientDAO(new DBServiceBuilder(HIBERNATE_CFG_FILE).buildClientService());
+        ClientDao clientDao = new DBClientDAO(new DBServiceBuilder().buildClientService());
         Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
         TemplateProcessor templateProcessor = new TemplateProcessorImpl(TEMPLATES_DIR);
         UserAuthService authService = new UserAuthServiceImpl(clientDao);

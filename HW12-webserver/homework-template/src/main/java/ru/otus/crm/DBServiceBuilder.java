@@ -12,14 +12,10 @@ import ru.otus.crm.service.DBServiceClient;
 import ru.otus.crm.service.DbServiceClientImpl;
 
 public class DBServiceBuilder {
-    private final String hibernateCfgFile;
-
-    public DBServiceBuilder(String hibernateCfgFile) {
-        this.hibernateCfgFile = hibernateCfgFile;
-    }
+    private static final String HIBERNATE_CFG_FILE = "hibernate.cfg.xml";
 
     public DBServiceClient buildClientService() {
-        var configuration = new Configuration().configure(hibernateCfgFile);
+        var configuration = new Configuration().configure(HIBERNATE_CFG_FILE);
 
         var dbUrl = configuration.getProperty("hibernate.connection.url");
         var dbUserName = configuration.getProperty("hibernate.connection.username");

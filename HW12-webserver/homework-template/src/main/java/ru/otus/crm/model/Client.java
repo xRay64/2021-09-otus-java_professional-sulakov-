@@ -53,7 +53,7 @@ public class Client implements Cloneable {
         this.name = name;
     }
 
-    public Client(Long id, String name, Address address, List<Phone> phones) {
+    public Client(Long id, String name, Address address, List<Phone> phones, String password) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -64,6 +64,7 @@ public class Client implements Cloneable {
         if (phones != null) {
             phones.forEach(phone -> phone.setClient(this));
         }
+        this.passwordMD5 = password;
     }
 
     @Override
@@ -74,7 +75,8 @@ public class Client implements Cloneable {
                 this.id,
                 this.name,
                 this.address.clone(),
-                copyPhones
+                copyPhones,
+                this.passwordMD5
         );
     }
 

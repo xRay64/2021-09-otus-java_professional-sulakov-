@@ -13,24 +13,9 @@
             padding: 20px;
         }
     </style>
-    <script>
-        function getUserById() {
-            const userIdTextBox = document.getElementById('userIdTextBox');
-            const userDataContainer = document.getElementById('userDataContainer');
-            const id = userIdTextBox.value;
-            //fetch('api/user?id=' + id)
-            fetch('api/user/' + id)
-                .then(response => response.json())
-                .then(user => userDataContainer.innerHTML = JSON.stringify(user));
-        }
-    </script>
 </head>
 
 <body>
-<h4>Получить пользователя по id</h4>
-<input type="text" id = "userIdTextBox" value="3" placeholder="Введите id пользователя">
-<button onclick="getUserById()">Получить</button>
-<pre id = "userDataContainer"></pre>
 
 <h4>Список пользователей</h4>
 <br>
@@ -62,5 +47,26 @@
         </#list>
     </tbody>
 </table>
+<br>
+<br>
+<br>
+<div style="border-style: dashed; border: black">
+    <form action="/users" method="post">
+        <fieldset style="width: 300px">
+            <legend>Добавить пользователя</legend>
+            <label style = 'width: 100px' for="client-name">Имя:</label>
+            <input id="client-name" type="text" name="name"><br>
+            <label for="client-address">Адрес:</label>
+            <input id="client-address" type="text" name="address"><br>
+            <label for="client-phones">Телефон(ы):</label>
+            <input id="client-phones" type="text" name="phones"><br>
+            <label for="client-password">Пароль:</label>
+            <input id="client-password" type="text" name="password">
+            <br>
+            <br>
+            <input style="width: 150px" type="submit" value="Сохранить">
+        </fieldset>
+    </form>
+</div>
 </body>
 </html>
