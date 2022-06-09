@@ -3,6 +3,7 @@ package ru.otus.demo;
 import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.otus.cachehw.MyCache;
 import ru.otus.crm.model.Client;
 import ru.otus.crm.service.DbServiceClientImpl;
 import ru.otus.crm.datasource.DriverManagerDataSource;
@@ -28,7 +29,8 @@ public class DbServiceDemo {
         var clientTemplate = new ClientDataTemplateJdbc(dbExecutor); //реализация DataTemplate, заточена на Client
 
 ///
-        var dbServiceClient = new DbServiceClientImpl(transactionRunner, clientTemplate);
+        var clientCache = new MyCache<Long, Client>();
+        var dbServiceClient = new DbServiceClientImpl(transactionRunner, clientTemplate, clientCache);
         dbServiceClient.saveClient(new Client("dbServiceFirst"));
 
         var clientSecond = dbServiceClient.saveClient(new Client("dbServiceSecond"));

@@ -2,6 +2,7 @@ package ru.otus.crm.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.otus.cachehw.HwCache;
 import ru.otus.cachehw.HwListener;
 import ru.otus.cachehw.MyCache;
 import ru.otus.core.repository.DataTemplate;
@@ -13,14 +14,17 @@ import java.util.Optional;
 
 public class DbServiceClientImpl implements DBServiceClient {
     private static final Logger log = LoggerFactory.getLogger(DbServiceClientImpl.class);
-    private static final MyCache<Long, Client> cache = new MyCache<>();
+    private final HwCache<Long, Client> cache;
 
     private final DataTemplate<Client> dataTemplate;
     private final TransactionRunner transactionRunner;
 
-    public DbServiceClientImpl(TransactionRunner transactionRunner, DataTemplate<Client> dataTemplate) {
+    public DbServiceClientImpl(TransactionRunner transactionRunner,
+                               DataTemplate<Client> dataTemplate,
+                               HwCache<Long, Client> cache) {
         this.transactionRunner = transactionRunner;
         this.dataTemplate = dataTemplate;
+        this.cache = cache;
 
         HwListener<Long, Client> listener = new HwListener<Long, Client>() {
             @Override
@@ -33,34 +37,31 @@ public class DbServiceClientImpl implements DBServiceClient {
 
     @Override
     public Client saveClient(Client client) {
-        return transactionRunner.doInTransaction(connection -> {
+        Client processedClient = transactionRunner.doInTransaction(connection -> {
             if (client.getId() == null) {
                 var clientId = dataTemplate.insert(connection, client);
                 var createdClient = new Client(clientId, client.getName());
                 log.info("created client: {}", createdClient);
-                cacheClient(createdClient);
                 return createdClient;
             }
             dataTemplate.update(connection, client);
             log.info("updated client: {}", client);
-            cacheClient(client);
             return client;
         });
+
+        cacheClient(processedClient);
+        return processedClient;
     }
 
     @Override
     public Optional<Client> getClient(long id) {
 
-        Optional<Client> client = Optional.ofNullable(cache.get(id));
-
-        if (client.isEmpty()) {
-            client = transactionRunner.doInTransaction(connection -> {
-                var clientOptional = dataTemplate.findById(connection, id);
-                log.info("client: {}", clientOptional);
-                return clientOptional;
-            });
-        }
-        return client;
+        return Optional.ofNullable(cache.get(id)).or(() -> transactionRunner.doInTransaction(connection -> {
+                    var clientOptional = dataTemplate.findById(connection, id);
+                    log.info("client: {}", clientOptional);
+                    return clientOptional;
+                })
+        );
     }
 
     @Override
@@ -69,12 +70,10 @@ public class DbServiceClientImpl implements DBServiceClient {
             var clientList = dataTemplate.findAll(connection);
             log.info("clientList:{}", clientList);
             return clientList;
-       });
+        });
     }
 
     private void cacheClient(Client client) {
-        if (client.getId() != null) {
-            cache.put(client.getId(), client);
-        }
+        cache.put(client.getId(), client);
     }
 }
