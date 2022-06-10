@@ -54,11 +54,15 @@ public class DbServiceManagerImpl implements DBServiceManager {
 
     @Override
     public Optional<Manager> getManager(long no) {
-        return Optional.ofNullable(cache.get(no)).or(() -> transactionRunner.doInTransaction(connection -> {
+        Optional<Manager> optionalManager = Optional.ofNullable(cache.get(no)).or(() -> transactionRunner.doInTransaction(connection -> {
             var managerOptional = managerDataTemplate.findById(connection, no);
             log.info("manager: {}", managerOptional);
             return managerOptional;
         }));
+
+        optionalManager.ifPresent(this::cacheManager);
+
+        return optionalManager;
     }
 
     @Override
