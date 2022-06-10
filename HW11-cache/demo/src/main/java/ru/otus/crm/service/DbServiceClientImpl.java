@@ -56,12 +56,16 @@ public class DbServiceClientImpl implements DBServiceClient {
     @Override
     public Optional<Client> getClient(long id) {
 
-        return Optional.ofNullable(cache.get(id)).or(() -> transactionRunner.doInTransaction(connection -> {
+        Optional<Client> optionalClient = Optional.ofNullable(cache.get(id)).or(() -> transactionRunner.doInTransaction(connection -> {
                     var clientOptional = dataTemplate.findById(connection, id);
                     log.info("client: {}", clientOptional);
                     return clientOptional;
                 })
         );
+
+        optionalClient.ifPresent(this::cacheClient);
+
+        return optionalClient;
     }
 
     @Override
