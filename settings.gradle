@@ -16,5 +16,7 @@ include 'HW12-webserver:homework-template'
 include 'HW12-webserver:webserver'
 include 'HW13-di:homework'
 include 'HW14-sdata-jdbc'
-include 'HW15-threads'
 include 'HW16-queue'
+include 'HW15-threads'
+include 'HW17-multiprocess'
+
