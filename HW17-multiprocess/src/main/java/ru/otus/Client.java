@@ -16,6 +16,8 @@ public class Client {
     private static int currentServer = 0;
     private static int current = 0;
 
+    private static final Object locker = new Object();
+
     public static void main(String[] args) throws InterruptedException {
         var latch = new CountDownLatch(1);
         var channel = ManagedChannelBuilder.forAddress(SERVER_HOST, SERVER_PORT)
@@ -32,7 +34,9 @@ public class Client {
                     @Override
                     public void onNext(Current value) {
                         System.out.printf("Get from remote %d\n", value.getNmbr());
-                        currentServer = value.getNmbr();
+                        synchronized (locker){
+                            currentServer = value.getNmbr();
+                        }
                     }
 
                     @Override
@@ -47,8 +51,15 @@ public class Client {
                     }
                 });
 
+        int lastServerValue = 0;
         for (int i = 0; i <= 50; i++) {
-            current = current + currentServer + 1;
+
+            synchronized (locker){
+                int newValue = lastServerValue == currentServer ? 0 : currentServer;
+                current = current + newValue + 1;
+                lastServerValue = currentServer;
+            }
+
             System.out.printf("currentValue:%d\n", current);
 
             try {
