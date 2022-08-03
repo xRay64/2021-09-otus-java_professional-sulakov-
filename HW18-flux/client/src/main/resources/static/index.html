@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://unpkg.com/can-ndjson-stream@0.1.6/dist/global/can-ndjson-stream.js"></script>
+    <script src="http://localhost:8080/webclient.js"></script>
+    <meta charset="utf-8">
+    <title>Пользователи</title>
+    <style>
+        table {
+            table-layout: fixed;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 3px solid black;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h4>Список пользователей</h4>
+<br>
+<div>
+    <table style="width: 400px">
+        <thead>
+            <tr>
+                <th style="width: 50px">Id</th>
+                <th style="width: 50px">Имя</th>
+                <th style="width: 150px">Адрес</th>
+                <th style="width: 300px">Телефоны</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+
+        </tbody>
+    </table>
+</div>
+<br>
+<br>
+<br>
+<div style="border-style: dashed; border: black">
+    <form id="myForm">
+        <fieldset style="width: 300px">
+            <legend>Добавить пользователя</legend>
+            <label style = 'width: 100px' for="client-name">Имя:</label>
+            <input id="client-name" type="text" name="name"><br>
+            <label for="client-address">Адрес:</label>
+            <input id="client-address" type="text" name="address"><br>
+            <label for="client-phones">Телефон(ы):</label>
+            <input id="client-phones" type="text" name="phones"><br>
+            <br>
+            <br>
+            <input style="width: 150px" type="submit" value="Сохранить">
+        </fieldset>
+    </form>
+</div>
+
+<script>
+    var form = document.getElementById('myForm');
+    form.onsubmit = function(event){
+        var xhr = new XMLHttpRequest();
+        var formData = new FormData(form);
+        //open the request
+        xhr.open('POST','http://localhost:8080/client/add')
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        //send the form data
+        console.log(JSON.stringify(Object.fromEntries(formData)))
+        xhr.send(JSON.stringify(Object.fromEntries(formData)));
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == XMLHttpRequest.DONE) {
+                form.reset(); //reset form after AJAX success or do something else
+            }
+        }
+
+        return false;
+    }
+</script>
+</body>
+</html>
