@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package ru.otus.protobuf.generated;
+
+option java_multiple_files = true;
+
+message SeqParams {
+  int32 from = 1;
+  int32 to = 2;
+}
+
+message Current {
+  int32 nmbr = 1;
+}
+
+message Empty {}
+
+service NumberSeqService {
+  rpc get(SeqParams) returns (stream Current);
+}
